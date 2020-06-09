@@ -1,8 +1,8 @@
 public class Token {
-    String symbol;
-    String name;
-    int row;
-    int column;
+    private String symbol;
+    private String name;
+    private int row;
+    private int column;
 
     Token(String symbol, String name, int row, int column) {
         this.symbol = symbol;
@@ -12,6 +12,6 @@ public class Token {
     }
 
     public String toString() {
-        return "{" + name + ", " + symbol + ", (" + row + "," + column + ")}";
+        return "{ \"" + symbol + "\", " + name + ", (" + row + "," + column + ") }";
     }
 }
