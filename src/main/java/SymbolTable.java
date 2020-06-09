@@ -1,17 +1,28 @@
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SymbolTable {
     private SymbolTable(){}
 
-    public static String DIGITS = "0123456789";
-    public static String LOWERCASE_LETTERS = "abcdefghijklmnopqrstuvwxyz";
-    public static String UPPERCASE_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    public static String[] breakers = {"(", ")", "{", "}", "!", "#", ",", ".", ":", "?",       //all separator
+    private static final String digits = "0|1|2|3|4|5|6|7|8|9";
+    private static final String lowercaseLetters = "a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z";
+    private static final String uppercaseLetters = "A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z";
+
+    public static final String[] breakers = {"(", ")", "{", "}", "!", "#", ",", ".", ":", "?", //all separator
             ">", "<", "=", "+", "-", "*", "/", "\\", "^", "&", "=", "_"};                      //and operator starting symbols
 
     static Map<String, String> symbols = init();
-    static Map<String, String> complexSymbols = init2();
+    static List<Automaton> complexSymbols;
+
+    static {
+        try {
+            complexSymbols = init2();
+        } catch (TokenException e) {
+            e.printStackTrace();
+        }
+    }
 
     private static Map<String, String> init() {
         Map<String, String> res = new HashMap<>();
@@ -57,13 +68,15 @@ public class SymbolTable {
         return res;
     }
 
-    private static Map<String, String> init2() {
-        Map<String, String> res = new HashMap<>();
+    private static List<Automaton> init2() throws TokenException {
+        List<Automaton> res = new ArrayList<>();
 
-        res.put("@int_automaton", "LTR_INTEGER");   //complex literals
-        res.put("@double_automaton", "LTR_DOUBLE");
+        res.add(new Automaton("(" + digits + ")+", "LTR_INTEGER"));            //complex literals
+        res.add(new Automaton("(" + digits + ")+.(" + digits + ")+", "LTR_DOUBLE"));
 
-        res.put("@ID_automaton", "ID");                       //IDs
+        //IDs
+        res.add(new Automaton(lowercaseLetters + "(" + lowercaseLetters + "|" +
+                uppercaseLetters + "|" + digits + "|_)", "ID"));
 
         return res;
     }
