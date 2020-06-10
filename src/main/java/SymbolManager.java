@@ -25,12 +25,16 @@ public class SymbolManager {
     }
 
     static boolean checkBreaker(String word) {      //check for token breakers at the end
-        String check = word.substring(word.length() - 1);
+        String check = word.substring(word.length() - 1);       //check last symbol
         if (check.isBlank())
             return true;
 
+        String check2 = word.substring(0, word.length() - 1);   //and everything but last
+
         for (String breaker : SymbolTable.breakers)
             if (check.equals(breaker))
+                return true;
+            else if (check2.equals(breaker))
                 return true;
 
         return false;
@@ -50,7 +54,12 @@ public class SymbolManager {
         String token = SymbolTable.symbols.getOrDefault(word, null);
         if (token != null)
             return token;
-        else
+        else {
+            for (Automaton automaton : SymbolTable.complexSymbols)
+                if (automaton.check(word))
+                    return automaton.tokenName;
+
             throw new TokenException("Invalid character");
+        }
     }
 }

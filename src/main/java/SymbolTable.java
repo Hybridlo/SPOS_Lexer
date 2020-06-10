@@ -11,7 +11,7 @@ public class SymbolTable {
     private static final String uppercaseLetters = "A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z";
 
     public static final String[] breakers = {"(", ")", "{", "}", "!", "#", ",", ".", ":", "?", //all separator
-            ">", "<", "=", "+", "-", "*", "/", "\\", "^", "&", "=", "_"};                      //and operator starting symbols
+            ">", "<", "=", "+", "-", "*", "/", "\\", "^", "&", "=", "\"", "\'"};               //and operator starting symbols
 
     static Map<String, String> symbols = init();
     static List<Automaton> complexSymbols;
@@ -48,9 +48,12 @@ public class SymbolTable {
         res.put("Module", "KEY_MODULE");
         res.put("Sub", "KEY_SUB");
         res.put("As", "KEY_AS");
-        res.put("To", "KEY_To");
+        res.put("To", "KEY_TO");
         res.put("Step", "KEY_STEP");
         res.put("Next", "KEY_NEXT");
+        res.put("GoTo", "KEY_GOTO");
+        res.put("Error", "KEY_ERROR");
+        res.put("New", "KEY_NEW");
         res.put("End", "KEY_END");
 
         res.put("Integer", "TYPE_INTEGER");         //primitive types
@@ -71,12 +74,12 @@ public class SymbolTable {
     private static List<Automaton> init2() throws TokenException {
         List<Automaton> res = new ArrayList<>();
 
-        res.add(new Automaton("(" + digits + ")+", "LTR_INTEGER"));            //complex literals
-        res.add(new Automaton("(" + digits + ")+.(" + digits + ")+", "LTR_DOUBLE"));
+        res.add(new Automaton("(" + digits + ")+", "LTR_INTEGER", digits));            //complex literals
+        res.add(new Automaton("(" + digits + ")+.(" + digits + ")+", "LTR_DOUBLE", digits + "."));
 
         //IDs
-        res.add(new Automaton(lowercaseLetters + "(" + lowercaseLetters + "|" +
-                uppercaseLetters + "|" + digits + "|_)", "ID"));
+        res.add(new Automaton(lowercaseLetters + "|" + uppercaseLetters + "(" + lowercaseLetters + "|" +
+                uppercaseLetters + "|" + digits + "|_)*", "ID", digits + lowercaseLetters + uppercaseLetters + "_"));
 
         return res;
     }

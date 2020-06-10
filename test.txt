@@ -1,3 +1,4 @@
 For := 123 As {} ()   
+123abc фыв
 Integer If _
 End
