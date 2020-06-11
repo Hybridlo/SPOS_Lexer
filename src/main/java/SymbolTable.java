@@ -14,15 +14,7 @@ public class SymbolTable {
             ">", "<", "=", "+", "-", "*", "/", "\\", "^", "&", "=", "\"", "\'"};               //and operator starting symbols
 
     static Map<String, String> symbols = init();
-    static List<Automaton> complexSymbols;
-
-    static {
-        try {
-            complexSymbols = init2();
-        } catch (TokenException e) {
-            e.printStackTrace();
-        }
-    }
+    static List<Automaton> complexSymbols = init2();
 
     private static Map<String, String> init() {
         Map<String, String> res = new HashMap<>();
@@ -71,15 +63,14 @@ public class SymbolTable {
         return res;
     }
 
-    private static List<Automaton> init2() throws TokenException {
+    private static List<Automaton> init2() {
         List<Automaton> res = new ArrayList<>();
 
-        res.add(new Automaton("(" + digits + ")+", "LTR_INTEGER", digits));            //complex literals
-        res.add(new Automaton("(" + digits + ")+.(" + digits + ")+", "LTR_DOUBLE", digits + "."));
+        res.add(IntegerAutom.getInstance());            //complex literals
+        res.add(DoubleAutom.getInstance());
 
         //IDs
-        res.add(new Automaton(lowercaseLetters + "|" + uppercaseLetters + "(" + lowercaseLetters + "|" +
-                uppercaseLetters + "|" + digits + "|_)*", "ID", digits + lowercaseLetters + uppercaseLetters + "_"));
+        res.add(IDAutom.getInstance());
 
         return res;
     }
